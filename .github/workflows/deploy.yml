@@ -35,8 +35,8 @@ jobs:
           npm run build || true
           test -f .output/public/index.html
 
-      - name: Fix asset paths for the /elegant-listings/ subpath
-        run: node scripts/fix-base-path.mjs .output/public /elegant-listings
+      - name: Fix asset paths for the /stickerie-demo/ subpath
+        run: node scripts/fix-base-path.mjs .output/public /stickerie-demo
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
