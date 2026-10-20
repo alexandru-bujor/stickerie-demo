@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens. Light values on :root, dark values for system dark
+   mode and for an explicit data-theme="dark" on <html>.
+   ------------------------------------------------------------------ */
+:root {
+  --paper: #f7f6f3;
+  --plate: #ffffff;
+  --ink: #151414;
+  --ink-2: #57524d;
+  --line: #151414;
+  --red: #e3262d;
+  --red-ink: #ffffff;
+  --red-soft: #fde6e5;
+  --rule: #e4e0db;
+  --shadow: #151414;
+  --ok: #1f7a4d;
+  --warn: #9a5b00;
+  --warn-bg: #fff3d6;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161514; --plate: #221f1e; --ink: #f3f0ec; --ink-2: #aba49c; --line: #f3f0ec;
+    --red: #ff3d43; --red-soft: #3a1c1d; --rule: #37332f; --shadow: #000000;
+    --ok: #4fc78a; --warn: #ffc35a; --warn-bg: #3a2c12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161514; --plate: #221f1e; --ink: #f3f0ec; --ink-2: #aba49c; --line: #f3f0ec;
+  --red: #ff3d43; --red-soft: #3a1c1d; --rule: #37332f; --shadow: #000000;
+  --ok: #4fc78a; --warn: #ffc35a; --warn-bg: #3a2c12;
+  color-scheme: dark;
+}
+
+/* Expose the tokens to Tailwind: bg-paper, text-ink, border-line, bg-brand, shadow-sticker … */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-plate: var(--plate);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-brand: var(--red);
+  --color-brand-ink: var(--red-ink);
+  --color-brand-soft: var(--red-soft);
+  --color-rule: var(--rule);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+
+  --font-display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --font-sans: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --shadow-sticker-sm: 3px 3px 0 var(--shadow);
+  --shadow-sticker: 5px 5px 0 var(--shadow);
+  --shadow-sticker-lg: 7px 7px 0 var(--shadow);
+  --shadow-sticker-red: 3px 3px 0 var(--red);
+
+  --radius-plate: 14px;
+}
+
+/* ------------------------------------------------------------------ base */
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; }
+  :focus-visible { outline: 3px solid var(--red); outline-offset: 2px; border-radius: 6px; }
+  img { max-width: 100%; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Brand utilities. Things that are awkward as class lists:
+   the die-cut plate, logo hatching, the peeling corner, the receipt.
+   ------------------------------------------------------------------ */
+@utility wrap {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* A die-cut sticker: white plate, ink outline, solid offset shadow (like the logo bubble). */
+@utility plate {
+  background: var(--plate);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 var(--shadow);
+}
+
+/* Red ground with the white diagonal hatching from the logo letters. */
+@utility hatch {
+  background-color: var(--red);
+  background-image: repeating-linear-gradient(-55deg, transparent 0 9px, rgb(255 255 255 / 0.22) 9px 12px);
+}
+
+/* Bottom-right corner lifts on hover, like a sticker being peeled. */
+@utility peel {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 0;
+    height: 0;
+    background: linear-gradient(315deg, var(--paper) 0 50%, var(--rule) 50% 100%);
+    border-top-left-radius: 6px;
+    box-shadow: -2px -2px 3px rgb(0 0 0 / 0.12);
+    transition: width 0.2s, height 0.2s;
+  }
+  &:hover::after { width: 30px; height: 30px; }
+}
+
+/* Small die-cut label used as a product thumbnail. */
+@utility diecut {
+  max-width: 100%;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.95;
+  text-align: center;
+  letter-spacing: -0.02em;
+  padding: 10px 12px;
+  background: var(--plate);
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px var(--plate), 0 0 0 6px var(--line);
+  overflow-wrap: anywhere;
+}
+
+/* Receipt with scalloped top and bottom edges. Put the drop shadow on a wrapper. */
+@utility receipt {
+  background: var(--plate);
+  -webkit-mask:
+    radial-gradient(circle 7px at 50% 0, transparent 97%, #000) top / 18px 51% repeat-x,
+    radial-gradient(circle 7px at 50% 100%, transparent 97%, #000) bottom / 18px 51% repeat-x;
+  mask:
+    radial-gradient(circle 7px at 50% 0, transparent 97%, #000) top / 18px 51% repeat-x,
+    radial-gradient(circle 7px at 50% 100%, transparent 97%, #000) bottom / 18px 51% repeat-x;
+}
+@utility barcode {
+  background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 8px, var(--ink) 8px 11px, transparent 11px 12px);
+}
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* SVG animation helpers used by the previews */
+@keyframes wave {
+  0%, 100% { transform: skewY(0) scaleX(1); }
+  50% { transform: skewY(-2.5deg) scaleX(0.975); }
+}
+.flag-wave { transform-box: fill-box; transform-origin: 0 50%; animation: wave 2.4s ease-in-out infinite; }
+.mug-reveal { opacity: 0; transition: opacity 0.9s; }
+.mug-hot .mug-reveal, .mug-hover:hover .mug-reveal { opacity: 1; }
